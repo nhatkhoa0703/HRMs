@@ -1,0 +1,35 @@
+﻿@model IEnumerable<HRMs.Models.Position>
+
+@{
+    ViewBag.Title = "Positions";
+}
+
+<h2>Positions</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<table class="table">
+    <tr>
+        <th>Position Name</th>
+        <th>Description</th>
+        <th>Basic Salary</th>
+        <th>Employees</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.PositionName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+            <td>@Html.DisplayFor(modelItem => item.BasicSalary)</td>
+            <td>@item.EmployeeCount</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.PositionID }, new { @class = "btn btn-warning btn-sm" }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.PositionID }, new { @class = "btn btn-danger btn-sm" })
+            </td>
+        </tr>
+    }
+</table>

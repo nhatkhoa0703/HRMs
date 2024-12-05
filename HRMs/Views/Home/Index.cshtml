@@ -1,0 +1,107 @@
+﻿@model HRMs.Models.DashboardViewModel
+
+@{
+    ViewBag.Title = "HR Management System";
+}
+
+<div class="jumbotron">
+    <h1>HR Management System</h1>
+    <p class="lead">Welcome to the Human Resource Management System</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total Employees</h3>
+            </div>
+            <div class="panel-body">
+                <h3>@Model.TotalEmployees</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Today's Attendance</h3>
+            </div>
+            <div class="panel-body">
+                <h3>@Model.TodayPresent</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Pending Leaves</h3>
+            </div>
+            <div class="panel-body">
+                <h3>@Model.PendingLeaves</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total Departments</h3>
+            </div>
+            <div class="panel-body">
+                <h3>@Model.TotalDepartments</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access -->
+<div class="row">
+    <!-- Employee Management Section -->
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Employee Management</h4>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group-vertical w-100" role="group">
+                    @Html.ActionLink("View All Employees", "Index", "Employee", null, new { @class = "btn btn-primary mb-2" })
+                    @Html.ActionLink("Add New Employee", "Create", "Employee", null, new { @class = "btn btn-success mb-2" })
+                    @Html.ActionLink("Manage Departments", "Index", "Department", null, new { @class = "btn btn-info mb-2" })
+                    @Html.ActionLink("Manage Positions", "Index", "Position", null, new { @class = "btn btn-warning mb-2" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Daily Operations Section -->
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Daily Operations</h4>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group-vertical w-100" role="group">
+                    @Html.ActionLink("Mark Attendance", "Index", "Attendance", null, new { @class = "btn btn-primary mb-2" })
+                    @Html.ActionLink("Apply Leave", "Create", "Leave", null, new { @class = "btn btn-success mb-2" })
+                    @Html.ActionLink("View Reports", "Report", "Attendance", null, new { @class = "btn btn-info mb-2" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .btn {
+        margin-bottom: 10px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .panel-body {
+        padding: 15px;
+    }
+
+    .panel-heading h4 {
+        margin: 0;
+        font-weight: bold;
+    }
+</style>

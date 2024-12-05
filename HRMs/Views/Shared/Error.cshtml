@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Error";
+}
+
+<div class="error-page">
+    <h1 class="text-danger">Error</h1>
+    <h2 class="text-danger">An error occurred while processing your request.</h2>
+
+    <div class="alert alert-warning">
+        <h4>Please try the following:</h4>
+        <ul>
+            <li>Make sure you have proper access rights</li>
+            <li>Check your input data</li>
+            <li>Try refreshing the page</li>
+            <li>Go back to the @Html.ActionLink("homepage", "Index", "Home")</li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,160 @@
+﻿@model Dictionary<string, object>
+
+@{
+    ViewBag.Title = "Attendance Dashboard";
+}
+
+<style>
+    .department-stat {
+        margin-bottom: 15px;
+    }
+
+        .department-stat p {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+    .progress {
+        height: 20px;
+        margin-bottom: 10px;
+    }
+
+    .progress-bar {
+        background-color: #337ab7;
+        line-height: 20px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        min-width: 2em;
+    }
+</style>
+
+<h2>Attendance Dashboard</h2>
+
+<div class="row">
+    <!-- Summary Cards -->
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Today's Attendance</div>
+            <div class="panel-body">
+                @{
+                    int totalEmployees = Model.ContainsKey("TotalEmployees") ? (int)Model["TotalEmployees"] : 0;
+                    int todayPresent = Model.ContainsKey("TodayPresent") ? (int)Model["TodayPresent"] : 0;
+                    int attendanceRate = totalEmployees > 0 ? (todayPresent * 100 / totalEmployees) : 0;
+                }
+                <h3>@attendanceRate%</h3>
+                <p>Present Rate</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-warning">
+            <div class="panel-heading">Late Check-ins</div>
+            <div class="panel-body">
+                <h3>@(Model.ContainsKey("LateToday") ? Model["LateToday"] : 0)</h3>
+                <p>Employees Late Today</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">Attendance Rate</div>
+            <div class="panel-body">
+                <h3>@(((int)Model["TodayPresent"] * 100 / (int)Model["TotalEmployees"]))%</h3>
+                <p>Present Rate</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Weekly Trend Chart -->
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Weekly Attendance Trend</div>
+            <div class="panel-body">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Stats -->
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Department-wise Attendance</div>
+            <div class="panel-body">
+                @{
+                    var departmentStats = Model["DepartmentStats"] as List<HRMs.Models.DepartmentAttendance>;
+                    if (departmentStats != null)
+                    {
+                        foreach (var dept in departmentStats)
+                        {
+                            <div class="department-stat">
+                                <p>@dept.Department</p>
+                                <div class="progress">
+                                    @{
+                                        var percentage = dept.Total > 0 ? (dept.Present * 100 / dept.Total) : 0;
+                                    }
+                                    <div class="progress-bar" role="progressbar"
+                                         style="width: @percentage%;">
+                                        @dept.Present / @dept.Total
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .department-stat {
+            margin-bottom: 15px;
+        }
+
+            .department-stat p {
+                margin-bottom: 5px;
+            }
+
+        .progress {
+            margin-bottom: 5px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Parse weekly trend data with null check
+        var trendData = @Html.Raw(Json.Encode(Model.ContainsKey("WeeklyTrend") ? Model["WeeklyTrend"] : new object[] {}));
+
+        // Create chart only if we have data
+        if (trendData && trendData.length > 0) {
+            var ctx = document.getElementById('trendChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trendData.map(d => d.Date),
+                    datasets: [{
+                        label: 'Attendance',
+                        data: trendData.map(d => d.Count),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: @(Model.ContainsKey("TotalEmployees") ? Model["TotalEmployees"] : 10)
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

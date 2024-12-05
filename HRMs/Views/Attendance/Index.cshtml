@@ -1,0 +1,108 @@
+﻿@model IEnumerable<HRMs.Models.Attendance>
+
+@{
+    ViewBag.Title = "Attendance";
+}
+
+<h2>Attendance</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Clock In/Out</div>
+            <div class="panel-body">
+                @Html.DropDownList("EmployeeID", (SelectList)ViewBag.Employees, "Select Employee", new { @class = "form-control", id = "employeeSelect" })
+                <br />
+                <button onclick="checkIn()" class="btn btn-success">Check In</button>
+                <button onclick="checkOut()" class="btn btn-warning">Check Out</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            @Html.ActionLink("View Attendance Report", "Report", null, new { @class = "btn btn-primary" })
+        </p>
+        <table class="table">
+            <tr>
+                <th>Employee</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Duration</th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EmployeeName</td>
+                    <td>@item.CheckIn.ToString("MM/dd/yyyy HH:mm")</td>
+                    <td>
+                        @if (item.CheckOut.HasValue)
+                        {
+                            @item.CheckOut.Value.ToString("MM/dd/yyyy HH:mm")
+                        }
+                        else
+                        {
+                            <span class="text-warning">Not checked out</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.CheckOut.HasValue)
+                        {
+                            TimeSpan duration = item.CheckOut.Value - item.CheckIn;
+                            @duration.ToString(@"hh\:mm")
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function checkIn() {
+            var employeeId = $("#employeeSelect").val();
+            if (!employeeId) {
+                alert("Please select an employee");
+                return;
+            }
+
+            $.post('@Url.Action("CheckIn")', { employeeId: employeeId })
+                .done(function (result) {
+                    if (result.success) {
+                        alert("Check in successful!");
+                        location.reload();
+                    } else {
+                        alert(result.message || "Check in failed");
+                    }
+                })
+                .fail(function () {
+                    alert("Error processing check in");
+                });
+        }
+
+        function checkOut() {
+            var employeeId = $("#employeeSelect").val();
+            if (!employeeId) {
+                alert("Please select an employee");
+                return;
+            }
+
+            $.post('@Url.Action("CheckOut")', { employeeId: employeeId })
+                .done(function (result) {
+                    if (result.success) {
+                        alert("Check out successful!");
+                        location.reload();
+                    } else {
+                        alert(result.message || "Check out failed");
+                    }
+                })
+                .fail(function () {
+                    alert("Error processing check out");
+                });
+        }
+    </script>
+}
